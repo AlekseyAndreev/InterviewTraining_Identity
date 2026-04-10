@@ -1,0 +1,124 @@
+﻿@model LoginViewModel
+
+@section CustomStyles {
+    <style>
+        .social-list__item-btn-VK {
+            width: 33px;
+            height: 33px;
+            background-image: url("../img/icons/icon-vk.svg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            border: none;
+        }
+
+        .social-list__item-btn-Microsoft {
+            width: 133px;
+            height: 33px;
+            background-image: url("../img/icons/icon-microsoft.png");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+            border: none;
+        }
+
+        .social-list__item-btn-Google {
+            width: 33px;
+            height: 33px;
+            background-image: url("../img/icons/icon-google.svg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            border: none;
+        }
+    </style>
+}
+
+<div class="login-page">
+    <div>
+        <h3><a href="https://togetherbytaxi.ru">Назад в основой сайт</a></h3>
+    </div>
+    <div>
+        <h1>Вход в приложение</h1>
+    </div>
+
+    <partial name="_ValidationSummary" />
+
+    <div class="row">
+
+        @if (Model.EnableLocalLogin)
+        {
+            <div class="col-sm-3" style="width: 300px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Войти</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form asp-route="Login">
+                            <input type="hidden" asp-for="ReturnUrl" />
+
+                            <fieldset>
+                                <div class="form-group">
+                                    <label asp-for="Login"></label>
+                                    <input class="form-control" placeholder="Пользователь" asp-for="Login" autofocus>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Password"></label>
+                                    <input type="password" class="form-control" placeholder="Пароль" asp-for="Password" autocomplete="off">
+                                </div>
+                                @if (Model.AllowRememberLogin)
+                                {
+                                    <div class="form-group login-remember">
+                                        <label asp-for="RememberLogin">
+                                            <input asp-for="RememberLogin">
+                                            <strong>Запомнить мой пароль</strong>
+                                        </label>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <button class="btn btn-primary" name="button" value="login">Войти</button>
+                                    <a class="btn btn-primary" asp-action="Register" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl" style="margin-top: 15px;">Зарегистрироваться</a>
+                                    <a class="btn btn-primary" href="https://togetherbytaxi.ru" style="margin-top: 15px;">Назад в основой сайт</a>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Model.VisibleExternalProviders.Any())
+        {
+            <div class="col-sm-2 external-providers" style="width: 300px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Войти через:</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-inline">
+                            @foreach (var provider in Model.VisibleExternalProviders)
+                            {
+                                <li>
+                                    <form asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                                        <button class="social-list__item social-list__item-btn-@provider.Name"
+                                                type="submit"
+                                                name="provider"
+                                                value="@provider.DisplayName">
+                                        </button>
+                                    </form>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!Model.EnableLocalLogin && !Model.VisibleExternalProviders.Any())
+        {
+            <div class="alert alert-warning">
+                <strong>Invalid login request</strong>
+                There are no login schemes configured for this client.
+            </div>
+        }
+    </div>
+</div>
