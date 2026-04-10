@@ -74,26 +74,43 @@ public class SeedData
         // client credentials client
         return new List<Client>
         {
-            // JavaScript Client
+            // JavaScript Client - Authorization Code Flow with PKCE
             new Client
             {
                 ClientId = Constants.WebSpaClientId,
                 ClientName = Constants.WebSpaClientName,
-                AllowedGrantTypes = GrantTypes.Implicit,
+                AllowedGrantTypes = GrantTypes.Code,
+                RequireClientSecret = false, // SPA doesn't need client secret when using PKCE
+                RequirePkce = true,
                 AllowAccessTokensViaBrowser = true,
                 RequireConsent = false,
 
                 RedirectUris =
                 {
-                    "http://localhost:4200/login/callback", "http://localhost:4200/assets/silent-renew.html",
-                    "http://localhost:5008/login/callback", "http://localhost:5008/assets/silent-renew.html",
-                    "http://webspa/login/callback", "http://webspa/assets/silent-renew.html",
-                    "http://togetherbytaxi.ru:5008/login/callback", "http://togetherbytaxi.ru:5008/assets/silent-renew.html",
-                    "http://togetherbytaxi.ru/login/callback", "http://togetherbytaxi.ru/assets/silent-renew.html",
-                    "https://togetherbytaxi.ru/login/callback", "https://togetherbytaxi.ru/assets/silent-renew.html",
+                    "http://localhost:4200/callback",
+                    "http://localhost:4200/login/callback",
+                    "http://localhost:4200/assets/silent-renew.html",
+                    "https://localhost:4200/callback",
+                    "https://localhost:4200/login/callback",
+                    "https://localhost:4200/assets/silent-renew.html",
+                    "http://localhost:5008/callback",
+                    "http://localhost:5008/login/callback",
+                    "http://localhost:5008/assets/silent-renew.html",
+                    "http://webspa/callback",
+                    "http://webspa/login/callback",
+                    "http://webspa/assets/silent-renew.html",
+                    "http://togetherbytaxi.ru:5008/callback",
+                    "http://togetherbytaxi.ru:5008/login/callback",
+                    "http://togetherbytaxi.ru:5008/assets/silent-renew.html",
+                    "http://togetherbytaxi.ru/callback",
+                    "http://togetherbytaxi.ru/login/callback",
+                    "http://togetherbytaxi.ru/assets/silent-renew.html",
+                    "https://togetherbytaxi.ru/callback",
+                    "https://togetherbytaxi.ru/login/callback",
+                    "https://togetherbytaxi.ru/assets/silent-renew.html",
                 },
-                PostLogoutRedirectUris = {"http://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
-                AllowedCorsOrigins = {"http://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
+                PostLogoutRedirectUris = {"http://localhost:4200", "https://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
+                AllowedCorsOrigins = {"http://localhost:4200", "https://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
 
                 AllowedScopes =
                 {
