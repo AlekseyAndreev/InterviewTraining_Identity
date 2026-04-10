@@ -116,11 +116,13 @@ public class SeedData
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
+                    IdentityServerConstants.StandardScopes.OfflineAccess,
                     CustomIdentityResources.CustomScopes.Roles,
                     CustomIdentityResources.CustomScopes.Permissions,
                     CustomApiResources.CustomScopes.SignalrScopeName,
                     CustomApiResources.CustomScopes.InterviewScopeName
                 },
+                AllowOfflineAccess = true,
 
                 AccessTokenLifetime = accessTokenLifeTime,
                 IdentityTokenLifetime = identityTokenLifeTime
