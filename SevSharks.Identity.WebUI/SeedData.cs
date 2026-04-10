@@ -47,7 +47,7 @@ public class SeedData
         return
         [
             new CustomApiResources.SignalRApiResource(),
-            new CustomApiResources.OrderApiResource()
+            new CustomApiResources.InterviewApiResource()
         ];
     }
 
@@ -59,7 +59,7 @@ public class SeedData
         return
         [
             new ApiScope(name: CustomApiResources.CustomScopes.SignalrScopeName,   displayName: CustomApiResources.CustomScopes.SignalrScopeName),
-            new ApiScope(name: CustomApiResources.CustomScopes.OrderScopeName,   displayName: CustomApiResources.CustomScopes.OrderScopeName),
+            new ApiScope(name: CustomApiResources.CustomScopes.InterviewScopeName,   displayName: CustomApiResources.CustomScopes.InterviewScopeName),
         ];
     }
 
@@ -102,7 +102,7 @@ public class SeedData
                     CustomIdentityResources.CustomScopes.Roles,
                     CustomIdentityResources.CustomScopes.Permissions,
                     CustomApiResources.CustomScopes.SignalrScopeName,
-                    CustomApiResources.CustomScopes.OrderScopeName
+                    CustomApiResources.CustomScopes.InterviewScopeName
                 },
 
                 AccessTokenLifetime = accessTokenLifeTime,
@@ -126,7 +126,7 @@ public class SeedData
                     CustomIdentityResources.CustomScopes.Roles,
                     CustomIdentityResources.CustomScopes.Permissions,
                     CustomApiResources.CustomScopes.SignalrScopeName,
-                    CustomApiResources.CustomScopes.OrderScopeName
+                    CustomApiResources.CustomScopes.InterviewScopeName
                 },
 
                 AccessTokenLifetime = accessTokenLifeTime,
@@ -255,6 +255,8 @@ public class SeedData
             await CreateUserCandidateAsync(createUserService, logger, "candidate2@mail.ru");
             await CreateUserExpertAsync(createUserService, logger, "expert1@mail.ru");
             await CreateUserExpertAsync(createUserService, logger, "expert2@mail.ru");
+            await CreateUserCandidateAndExpertAsync(createUserService, logger, "candidateandexpert1@mail.ru");
+            await CreateUserCandidateAndExpertAsync(createUserService, logger, "candidateandexpert2@mail.ru");
             await CreateUserAdminAsync(createUserService, logger, "admin1@mail.ru");
             await CreateUserAdminAsync(createUserService, logger, "admin2@mail.ru");
         }
@@ -265,17 +267,20 @@ public class SeedData
     }
 
     private static async Task CreateUserCandidateAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, Constants.Roles.Candidate);
+        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate ]);
 
     private static async Task CreateUserExpertAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, Constants.Roles.Expert);
+        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Expert ]);
+
+    private static async Task CreateUserCandidateAndExpertAsync(CreateUserService createUserService, ILogger logger, string userName) =>
+        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate, Constants.Roles.Candidate]);
 
     private static async Task CreateUserAdminAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, Constants.Roles.Admin);
+        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Admin ]);
 
-    private static async Task CreateUserAsync(CreateUserService createUserService, ILogger logger, string userName, string role)
+    private static async Task CreateUserAsync(CreateUserService createUserService, ILogger logger, string userName, string[] roles)
     {
-        logger.LogInformation("Add user {userName} with role {role}", userName, role);
+        logger.LogInformation("Add user {userName}", userName);
         var userDto = new CreateUserDto
         {
             UserName = userName,
@@ -284,7 +289,7 @@ public class SeedData
             PhoneNumberConfirmed = true,
             Password = "Pass123$",
             Email = userName,
-            Role = role
+            Roles = roles
         };
 
         var addedUser = await createUserService.CreateUser(userDto);

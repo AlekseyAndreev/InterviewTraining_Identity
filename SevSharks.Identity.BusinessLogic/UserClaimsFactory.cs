@@ -35,6 +35,17 @@ namespace SevSharks.Identity.BusinessLogic
                 identity.AddClaim(new Claim(JwtClaimTypes.Name, username));
             }
 
+            if (UserManager.SupportsUserRole)
+            {
+                var roleClaims =
+                    from role in await UserManager.GetRolesAsync(user)
+                    select new Claim(JwtClaimTypes.Role, role);
+                if (roleClaims != null && roleClaims.Any())
+                {
+                    identity.AddClaims(roleClaims);
+                }
+            }
+
             if (UserManager.SupportsUserEmail)
             {
                 var email = await UserManager.GetEmailAsync(user);

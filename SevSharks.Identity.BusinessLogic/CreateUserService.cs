@@ -75,12 +75,19 @@ public class CreateUserService
             throw new Exception(result.Errors.First().Description);
         }
 
-        if (!string.IsNullOrEmpty(userDto.Role))
+        if (userDto.Roles != null && userDto.Roles.Any())
         {
-            result = await _userManager.AddToRoleAsync(user, userDto.Role);
-            if (!result.Succeeded)
+            foreach (var role in userDto.Roles)
             {
-                throw new Exception(result.Errors.First().Description);
+                if (string.IsNullOrEmpty(role))
+                {
+                    continue;
+                }
+                result = await _userManager.AddToRoleAsync(user, role);
+                if (!result.Succeeded)
+                {
+                    throw new Exception(result.Errors.First().Description);
+                }
             }
         }
 

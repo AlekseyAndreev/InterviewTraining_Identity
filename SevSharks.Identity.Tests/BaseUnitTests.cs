@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Order.BusinessLogic.Managers.Tests
+namespace SevSharks.Identity.Tests
 {
     public abstract class BaseUnitTests
     {

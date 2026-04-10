@@ -10,5 +10,5 @@ public class CreateUserDto
     public bool PhoneNumberConfirmed { get; set; }
     public string ExternalSystemIdentifier { get; set; }
     public string ExternalSystemName { get; set; }
-    public string Role { get; set; }
+    public string[] Roles { get; set; }
 }

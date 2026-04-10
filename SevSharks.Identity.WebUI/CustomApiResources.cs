@@ -1,4 +1,5 @@
-﻿using Duende.IdentityServer.Models;
+﻿using Duende.IdentityModel;
+using Duende.IdentityServer.Models;
 using System.Collections.Generic;
 
 namespace SevSharks.Identity.WebUI
@@ -7,8 +8,8 @@ namespace SevSharks.Identity.WebUI
     {
         public static class CustomScopes
         {
-            public const string SignalrScopeName = "tbt_signalr_web";
-            public const string OrderScopeName = "tbt_order";
+            public const string SignalrScopeName = "interview_training_signalr_web";
+            public const string InterviewScopeName = "interview_training_interview";
         }
 
         public class SignalrScope : ApiScope
@@ -16,7 +17,7 @@ namespace SevSharks.Identity.WebUI
             public SignalrScope()
             {
                 Name = CustomScopes.SignalrScopeName;
-                DisplayName = "Уведомления от ВместеНаТакси";
+                DisplayName = "Уведомления от Интервью";
                 Required = true;
             }
         }
@@ -28,26 +29,28 @@ namespace SevSharks.Identity.WebUI
                 Name = CustomScopes.SignalrScopeName;
                 DisplayName = "SignalR Web Resource";
                 Scopes = new List<string> { CustomScopes.SignalrScopeName };
+                UserClaims = new[] { JwtClaimTypes.Role };
             }
         }
 
-        public class OrderScope : ApiScope
+        public class InterviewScope : ApiScope
         {
-            public OrderScope()
+            public InterviewScope()
             {
-                Name = CustomScopes.OrderScopeName;
-                DisplayName = "Заказы от ВместеНаТакси";
+                Name = CustomScopes.InterviewScopeName;
+                DisplayName = "Интервью";
                 Required = true;
             }
         }
 
-        public class OrderApiResource : ApiResource
+        public class InterviewApiResource : ApiResource
         {
-            public OrderApiResource()
+            public InterviewApiResource()
             {
-                Name = CustomScopes.OrderScopeName;
-                DisplayName = "Order Web Resource";
-                Scopes = new List<string> { CustomScopes.OrderScopeName };
+                Name = CustomScopes.InterviewScopeName;
+                DisplayName = "Interview Web Resource";
+                Scopes = new List<string> { CustomScopes.InterviewScopeName };
+                UserClaims = new[] { JwtClaimTypes.Role };
             }
         }
     }
