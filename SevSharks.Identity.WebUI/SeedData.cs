@@ -292,7 +292,7 @@ public class SeedData
         await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Expert ]);
 
     private static async Task CreateUserCandidateAndExpertAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate, Constants.Roles.Candidate]);
+        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate, Constants.Roles.Expert ]);
 
     private static async Task CreateUserAdminAsync(CreateUserService createUserService, ILogger logger, string userName) =>
         await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Admin ]);
