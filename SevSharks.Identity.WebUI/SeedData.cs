@@ -122,6 +122,14 @@ public class SeedData
                     "https://interview-training.site/callback",
                     "https://interview-training.site/login/callback",
                     "https://interview-training.site/assets/silent-renew.html",
+
+                    "https://interview-training.site:8182/callback",
+                    "https://interview-training.site:8182/login/callback",
+                    "https://interview-training.site:8182/assets/silent-renew.html",
+
+                    "https://192.168.0.112:8182/callback",
+                    "https://192.168.0.112:8182/login/callback",
+                    "https://192.168.0.112:8182/assets/silent-renew.html",
                 },
                 PostLogoutRedirectUris = 
                 {
@@ -134,6 +142,8 @@ public class SeedData
                     "https://interview-training.site:5108",
                     "http://interview-training.site",
                     "https://interview-training.site",
+                    "https://interview-training.site:8182",
+                    "https://192.168.0.112:8182",
                 },
                 AllowedCorsOrigins = 
                 {
@@ -146,6 +156,8 @@ public class SeedData
                     "https://interview-training.site:5108",
                     "http://interview-training.site",
                     "https://interview-training.site",
+                    "https://interview-training.site:8182",
+                    "https://192.168.0.112:8182",
                 },
 
                 AllowedScopes =
