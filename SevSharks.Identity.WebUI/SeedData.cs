@@ -90,27 +90,63 @@ public class SeedData
                     "http://localhost:4200/callback",
                     "http://localhost:4200/login/callback",
                     "http://localhost:4200/assets/silent-renew.html",
+
                     "https://localhost:4200/callback",
                     "https://localhost:4200/login/callback",
                     "https://localhost:4200/assets/silent-renew.html",
-                    "http://localhost:5008/callback",
-                    "http://localhost:5008/login/callback",
-                    "http://localhost:5008/assets/silent-renew.html",
+
+                    "http://localhost:5108/callback",
+                    "http://localhost:5108/login/callback",
+                    "http://localhost:5108/assets/silent-renew.html",
+
+                    "https://localhost:5108/callback",
+                    "https://localhost:5108/login/callback",
+                    "https://localhost:5108/assets/silent-renew.html",
+
                     "http://webspa/callback",
                     "http://webspa/login/callback",
                     "http://webspa/assets/silent-renew.html",
-                    "http://togetherbytaxi.ru:5008/callback",
-                    "http://togetherbytaxi.ru:5008/login/callback",
-                    "http://togetherbytaxi.ru:5008/assets/silent-renew.html",
-                    "http://togetherbytaxi.ru/callback",
-                    "http://togetherbytaxi.ru/login/callback",
-                    "http://togetherbytaxi.ru/assets/silent-renew.html",
-                    "https://togetherbytaxi.ru/callback",
-                    "https://togetherbytaxi.ru/login/callback",
-                    "https://togetherbytaxi.ru/assets/silent-renew.html",
+
+                    "http://interview-training.site:5108/callback",
+                    "http://interview-training.site:5108/login/callback",
+                    "http://interview-training.site:5108/assets/silent-renew.html",
+
+                    "https://interview-training.site:5108/callback",
+                    "https://interview-training.site:5108/login/callback",
+                    "https://interview-training.site:5108/assets/silent-renew.html",
+
+                    "http://interview-training.site/callback",
+                    "http://interview-training.site/login/callback",
+                    "http://interview-training.site/assets/silent-renew.html",
+
+                    "https://interview-training.site/callback",
+                    "https://interview-training.site/login/callback",
+                    "https://interview-training.site/assets/silent-renew.html",
                 },
-                PostLogoutRedirectUris = {"http://localhost:4200", "https://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
-                AllowedCorsOrigins = {"http://localhost:4200", "https://localhost:4200", "http://localhost:5008", "http://webspa", "http://togetherbytaxi.ru:5008", "http://togetherbytaxi.ru", "https://togetherbytaxi.ru", },
+                PostLogoutRedirectUris = 
+                {
+                    "http://localhost:4200",
+                    "https://localhost:4200",
+                    "http://localhost:5108",
+                    "https://localhost:5108",
+                    "http://webspa",
+                    "http://interview-training.site:5108",
+                    "https://interview-training.site:5108",
+                    "http://interview-training.site",
+                    "https://interview-training.site",
+                },
+                AllowedCorsOrigins = 
+                {
+                    "http://localhost:4200",
+                    "https://localhost:4200",
+                    "http://localhost:5108",
+                    "https://localhost:5108",
+                    "http://webspa",
+                    "http://interview-training.site:5108",
+                    "https://interview-training.site:5108",
+                    "http://interview-training.site",
+                    "https://interview-training.site",
+                },
 
                 AllowedScopes =
                 {
