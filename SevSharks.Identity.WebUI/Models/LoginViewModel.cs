@@ -81,6 +81,11 @@ namespace SevSharks.Identity.WebUI.Models
         public bool RedirectToRegister { get; set; }
 
         /// <summary>
+        /// RedirectToChangeRoles
+        /// </summary>
+        public bool RedirectToChangeRoles { get; set; }
+
+        /// <summary>
         /// Идентификатор клиента.
         /// </summary>
         public string ClientId { get; set; }

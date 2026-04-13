@@ -27,6 +27,12 @@ namespace SevSharks.Identity.WebUI.Controllers
                 return RedirectToAction("Register");
             }
 
+            if (vm.RedirectToChangeRoles)
+            {
+                TempData["ReturnUrl"] = returnUrl;
+                return RedirectToAction("ChangeRoles");
+            }
+
             if (vm.IsExternalLoginOnly)
             {
                 // we only have one option for logging in and it's an external provider
@@ -121,6 +127,7 @@ namespace SevSharks.Identity.WebUI.Controllers
                 Login = context?.LoginHint,
                 ExternalProviders = providers.ToArray(),
                 RedirectToRegister = GetBoolWithName(context, "redirect_to_register"),
+                RedirectToChangeRoles = GetBoolWithName(context, "redirect_to_change_roles"),
                 ClientId = context?.Client?.ClientId
             };
         }

@@ -24,11 +24,6 @@ namespace SevSharks.Identity.WebUI.Controllers
                 returnUrl = TempData["ReturnUrl"].ToString();
             }
 
-            if (!AllowRegister)
-            {
-                return RedirectToLocal(returnUrl);
-            }
-
             ViewData["ReturnUrl"] = returnUrl;
             var userId = GetCurrentUserId();
             var (user, roles) = await _userService.GetUserInfoById(userId);

@@ -33,14 +33,13 @@
     </div>
     -->
     <div class="container body-content">
-        @if (!string.IsNullOrEmpty(name))
+        @if (!string.IsNullOrEmpty(name) && false)
         {
             <p>Здравствуйте, @name</p>
             <a href="/Account/Logout">Выход</a>
         }
         @RenderBody()
     </div>
-
     <!--
     <div class="container">
         <footer class="main-footer">
