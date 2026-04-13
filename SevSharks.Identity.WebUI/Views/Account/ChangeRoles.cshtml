@@ -17,7 +17,7 @@
     <h3><a href="https://interview-training.site">Назад в основой сайт</a></h3>
 </div>
 <div style="width: 300px;">
-    <form asp-controller="Account" asp-action="Register" method="post">
+    <form asp-controller="Account" asp-action="ChangeRoles" method="post">
         @Html.AntiForgeryToken()
         @if (Model != null && !Model.IsSucceed && Model.ErrorMessages != null && Model.ErrorMessages.Any())
         {

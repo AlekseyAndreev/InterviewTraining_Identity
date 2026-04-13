@@ -32,7 +32,7 @@ public class UserService
         }
 
         var isCandidate = await _userManager.IsInRoleAsync(user, RolesConstants.Candidate);
-        var isExpert = await _userManager.IsInRoleAsync(user, RolesConstants.Candidate);
+        var isExpert = await _userManager.IsInRoleAsync(user, RolesConstants.Expert);
 
         List<string> rolesResult = new List<string>();
 
