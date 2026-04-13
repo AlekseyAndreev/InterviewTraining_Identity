@@ -140,19 +140,41 @@ public class UserService
     public async Task<ApplicationUser> UpdateUserRoles(string userName, string[] roles)
     {
         var user = await _userManager.FindByNameAsync(userName);
-        if (user != null)
+        if (user == null)
         {
-            var existingUser = _context.Users
-                .FirstOrDefault(u => u.Id == user.Id);
-
-            var result = await _userManager.UpdateAsync(user);
-            if (result.Succeeded)
-            {
-                return user;
-            }
-            throw new Exception(result.Errors.First().Description);
+            throw new Exception("Не найден пользователь");
         }
 
-        throw new Exception("Не найден пользователь");
+        // Получаем текущие роли пользователя
+        var currentRoles = await _userManager.GetRolesAsync(user);
+
+        // Удаляем все текущие роли
+        if (currentRoles.Any())
+        {
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                throw new Exception(removeResult.Errors.First().Description);
+            }
+        }
+
+        // Добавляем новые роли
+        if (roles != null && roles.Any())
+        {
+            foreach (var role in roles)
+            {
+                if (string.IsNullOrEmpty(role))
+                {
+                    continue;
+                }
+                var addResult = await _userManager.AddToRoleAsync(user, role);
+                if (!addResult.Succeeded)
+                {
+                    throw new Exception(addResult.Errors.First().Description);
+                }
+            }
+        }
+
+        return user;
     }
 }
