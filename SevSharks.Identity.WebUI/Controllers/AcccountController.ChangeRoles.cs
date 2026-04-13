@@ -68,11 +68,9 @@ namespace SevSharks.Identity.WebUI.Controllers
                 changeUserRolesViewModel.IsSucceed = true;
                 changeUserRolesViewModel.ErrorMessages = new List<string>();
 
-                var userAndError = await ChangeUserRoles(
+                var (user, error) = await ChangeUserRoles(
                     changeUserRolesViewModel.Login,
                     changeUserRolesViewModel.Roles?.ToArray());
-                var user = userAndError.Item1;
-                var error = userAndError.Item2;
                 if (!string.IsNullOrEmpty(error))
                 {
                     changeUserRolesViewModel.IsSucceed = false;
@@ -115,7 +113,7 @@ namespace SevSharks.Identity.WebUI.Controllers
             return View(changeUserRolesViewModel);
         }
 
-        private async Task<(ApplicationUser, string)> ChangeUserRoles(string login, string[] roles = null)
+        private async Task<(ApplicationUser user, string error)> ChangeUserRoles(string login, string[] roles = null)
         {
             ApplicationUser user = null;
             string error = string.Empty;
