@@ -35,6 +35,12 @@ namespace SevSharks.Identity.WebUI.Models
         public string ConfirmPassword { get; set; }
 
         /// <summary>
+        /// Роли пользователя
+        /// </summary>
+        [Display(Name = "Роли пользователя")]
+        public List<string> Roles { get; set; }
+
+        /// <summary>
         /// Телефон пользователя.
         /// </summary>
         [DataType(DataType.PhoneNumber)]

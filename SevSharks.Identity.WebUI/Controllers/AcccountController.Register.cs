@@ -1,5 +1,4 @@
-﻿using Duende.IdentityServer.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SevSharks.Identity.WebUI.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +9,11 @@ namespace SevSharks.Identity.WebUI.Controllers
 {
     public partial class AccountController
     {
+        /// <summary>
+        /// Допустимые роли для регистрации
+        /// </summary>
+        private static readonly HashSet<string> AllowedRoles = new HashSet<string> { Constants.Roles.Candidate, Constants.Roles.Expert };
+
         /// <summary>
         /// Show register page
         /// </summary>
@@ -43,12 +47,27 @@ namespace SevSharks.Identity.WebUI.Controllers
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
             var validCaptcha = await ValidateCaptcha();
+
+            // Валидация ролей
+            if (registerViewModel.Roles != null && registerViewModel.Roles.Any())
+            {
+                var invalidRoles = registerViewModel.Roles.Where(r => !AllowedRoles.Contains(r)).ToList();
+                if (invalidRoles.Any())
+                {
+                    ModelState.AddModelError("Roles", $"Недопустимые роли: {string.Join(", ", invalidRoles)}");
+                }
+            }
+
             if (ModelState.IsValid && validCaptcha)
             {
                 registerViewModel.IsSucceed = true;
                 registerViewModel.ErrorMessages = new List<string>();
 
-                var userAndError = await CreateUser(registerViewModel.Login, registerViewModel.Password, registerViewModel.Phone);
+                var userAndError = await CreateUser(
+                    registerViewModel.Login,
+                    registerViewModel.Password,
+                    registerViewModel.Phone,
+                    registerViewModel.Roles?.ToArray());
                 var user = userAndError.Item1;
                 var error = userAndError.Item2;
                 if (!string.IsNullOrEmpty(error))

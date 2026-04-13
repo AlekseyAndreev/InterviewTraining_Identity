@@ -5,3 +5,6 @@ TogetherByTaxi https://github.com/AlekseyAndreev/InterviewTraining_Identity
 
 Пользователь осуществляет логин в приложение с помощью этого сервиса.
 Так же осуществляется проверка токенов в этом сервисе
+
+https://www.google.com/recaptcha/admin#list
+тут инфа по гугл рекапче

@@ -206,7 +206,7 @@ namespace SevSharks.Identity.WebUI.Controllers
                 {
                     throw new ApplicationException("Error loading external login information during confirmation.");
                 }
-                var userAndError = await CreateUser(model.Login, string.Empty, model.Phone, model.ExternalSystemIdentifier, model.ExternalSystemName);
+                var userAndError = await CreateUser(model.Login, string.Empty, model.Phone, roles: null, externalSystemIdentifier: model.ExternalSystemIdentifier, externalSystemName: model.ExternalSystemName);
                 var user = userAndError.Item1;
                 var error = userAndError.Item2;
                 if (!string.IsNullOrEmpty(error))

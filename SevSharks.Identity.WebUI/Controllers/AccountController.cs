@@ -1,4 +1,4 @@
-using Duende.IdentityModel;
+﻿using Duende.IdentityModel;
 using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
@@ -114,6 +114,7 @@ namespace SevSharks.Identity.WebUI.Controllers
         private async Task<(ApplicationUser, string)> CreateUser(string login,
             string password,
             string phone,
+            string[] roles = null,
             string externalSystemIdentifier = null, string externalSystemName = null)
         {
             ApplicationUser user = null;
@@ -135,7 +136,8 @@ namespace SevSharks.Identity.WebUI.Controllers
                     PhoneNumberConfirmed = false,
                     ExternalSystemIdentifier = externalSystemIdentifier,
                     ExternalSystemName = externalSystemName,
-                    Password = password
+                    Password = password,
+                    Roles = roles
                 };
 
                 user = await _createUserService.CreateUser(userDto);
