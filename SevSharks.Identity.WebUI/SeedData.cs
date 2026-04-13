@@ -270,18 +270,18 @@ public class SeedData
         var roleManager = scope.ServiceProvider.GetService<RoleManager<ApplicationRole>>();
         await SeedRolesAsync(roleManager, logger);
 
-        var createUserService = scope.ServiceProvider.GetService<CreateUserService>();
+        var userService = scope.ServiceProvider.GetService<UserService>();
 
-        await AddAllUsersAsync(createUserService, logger);
+        await AddAllUsersAsync(userService, logger);
     }
 
     private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager, ILogger logger)
     {
         var roles = new[]
         {
-            Constants.Roles.Candidate,
-            Constants.Roles.Expert,
-            Constants.Roles.Admin
+            RolesConstants.Candidate,
+            RolesConstants.Expert,
+            RolesConstants.Admin
         };
 
         foreach (var roleName in roles)
@@ -313,19 +313,19 @@ public class SeedData
         }
     }
 
-    private static async Task AddAllUsersAsync(CreateUserService createUserService, ILogger logger)
+    private static async Task AddAllUsersAsync(UserService userService, ILogger logger)
     {
         try
         {
             logger.LogInformation("Adding all users");
-            await CreateUserCandidateAsync(createUserService, logger, "candidate1@mail.ru");
-            await CreateUserCandidateAsync(createUserService, logger, "candidate2@mail.ru");
-            await CreateUserExpertAsync(createUserService, logger, "expert1@mail.ru");
-            await CreateUserExpertAsync(createUserService, logger, "expert2@mail.ru");
-            await CreateUserCandidateAndExpertAsync(createUserService, logger, "candidateandexpert1@mail.ru");
-            await CreateUserCandidateAndExpertAsync(createUserService, logger, "candidateandexpert2@mail.ru");
-            await CreateUserAdminAsync(createUserService, logger, "admin1@mail.ru");
-            await CreateUserAdminAsync(createUserService, logger, "admin2@mail.ru");
+            await CreateUserCandidateAsync(userService, logger, "candidate1@mail.ru");
+            await CreateUserCandidateAsync(userService, logger, "candidate2@mail.ru");
+            await CreateUserExpertAsync(userService, logger, "expert1@mail.ru");
+            await CreateUserExpertAsync(userService, logger, "expert2@mail.ru");
+            await CreateUserCandidateAndExpertAsync(userService, logger, "candidateandexpert1@mail.ru");
+            await CreateUserCandidateAndExpertAsync(userService, logger, "candidateandexpert2@mail.ru");
+            await CreateUserAdminAsync(userService, logger, "admin1@mail.ru");
+            await CreateUserAdminAsync(userService, logger, "admin2@mail.ru");
         }
         catch (Exception e)
         {
@@ -333,19 +333,19 @@ public class SeedData
         }
     }
 
-    private static async Task CreateUserCandidateAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate ]);
+    private static async Task CreateUserCandidateAsync(UserService userService, ILogger logger, string userName) =>
+        await CreateUserAsync(userService, logger, userName, [RolesConstants.Candidate ]);
 
-    private static async Task CreateUserExpertAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Expert ]);
+    private static async Task CreateUserExpertAsync(UserService userService, ILogger logger, string userName) =>
+        await CreateUserAsync(userService, logger, userName, [RolesConstants.Expert ]);
 
-    private static async Task CreateUserCandidateAndExpertAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Candidate, Constants.Roles.Expert ]);
+    private static async Task CreateUserCandidateAndExpertAsync(UserService userService, ILogger logger, string userName) =>
+        await CreateUserAsync(userService, logger, userName, [RolesConstants.Candidate, RolesConstants.Expert ]);
 
-    private static async Task CreateUserAdminAsync(CreateUserService createUserService, ILogger logger, string userName) =>
-        await CreateUserAsync(createUserService, logger, userName, [ Constants.Roles.Admin ]);
+    private static async Task CreateUserAdminAsync(UserService userService, ILogger logger, string userName) =>
+        await CreateUserAsync(userService, logger, userName, [ RolesConstants.Admin ]);
 
-    private static async Task CreateUserAsync(CreateUserService createUserService, ILogger logger, string userName, string[] roles)
+    private static async Task CreateUserAsync(UserService userService, ILogger logger, string userName, string[] roles)
     {
         logger.LogInformation("Add user {userName}", userName);
         var userDto = new CreateUserDto
@@ -359,7 +359,7 @@ public class SeedData
             Roles = roles
         };
 
-        var addedUser = await createUserService.CreateUser(userDto);
+        var addedUser = await userService.CreateUser(userDto);
         logger.LogInformation("Added user {userName}", addedUser.UserName);
     }
 }

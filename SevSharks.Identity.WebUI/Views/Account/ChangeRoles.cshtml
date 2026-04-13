@@ -1,0 +1,66 @@
+﻿@using SevSharks.Identity.DataAccess.Models
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+
+@inject IConfiguration Configuration
+@inject SignInManager<ApplicationUser> SignInManager
+
+@model SevSharks.Identity.WebUI.Models.ChangeUserRolesViewModel
+@{
+    ViewBag.Title = "Изменение ролей пользователя";
+
+    bool showCaptcha = ViewBag.ShowCaptcha == true;
+}
+
+<h2>@ViewBag.Title</h2>
+<div>
+    <h3><a href="https://interview-training.site">Назад в основой сайт</a></h3>
+</div>
+<div style="width: 300px;">
+    <form asp-controller="Account" asp-action="Register" method="post">
+        @Html.AntiForgeryToken()
+        @if (Model != null && !Model.IsSucceed && Model.ErrorMessages != null && Model.ErrorMessages.Any())
+        {
+            <div class="form-group">
+                <ul class="form__group-validation">
+                    @foreach (var error in Model.ErrorMessages)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+        <div class="form-group">
+            @Html.LabelFor(m => m.Login, new { @class = "form-label  form__label--with" })
+            <input asp-for="Login" class="form-control" readonly="readonly" style="background-color: #e9ecef;" />
+            <input type="hidden" asp-for="Login" />
+        </div>
+       <div class="form-group">
+            @Html.LabelFor(m => m.Roles, new { @class = "form-label form__label--with" })
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="Roles" value="@SevSharks.Identity.BusinessLogic.RolesConstants.Candidate" id="roleCandidate"
+                @(Model?.Roles?.Contains(SevSharks.Identity.BusinessLogic.RolesConstants.Candidate) == true ? "checked" : "") />
+                <label class="form-check-label" for="roleCandidate">Кандидат</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="Roles" value="@SevSharks.Identity.BusinessLogic.RolesConstants.Expert" id="roleExpert"
+                @(Model?.Roles?.Contains(SevSharks.Identity.BusinessLogic.RolesConstants.Expert) == true ? "checked" : "") />
+               <label class="form-check-label" for="roleExpert">Эксперт</label>
+            </div>
+            <small class="form-text text-muted">Выберите одну или несколько ролей (можно не выбирать)</small>
+            @Html.ValidationMessageFor(m => m.Roles, string.Empty)
+        </div>
+        <div class="form-group">
+            <div class="g-recaptcha" data-sitekey=@Configuration["CSP:dataSitekey"]></div>
+        </div>
+        @Html.HiddenFor(p => p.ReturnUrl)
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Изменить роли</button>
+        </div>
+    </form>
+</div>
+
+@section CustomStyles {
+    <link rel="stylesheet" href="~/css/site.css" />
+}
+<script src="https://www.google.com/recaptcha/api.js"></script>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using SevSharks.Identity.BusinessLogic;
 using SevSharks.Identity.WebUI.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace SevSharks.Identity.WebUI.Controllers
         /// <summary>
         /// Допустимые роли для регистрации
         /// </summary>
-        private static readonly HashSet<string> AllowedRoles = new HashSet<string> { Constants.Roles.Candidate, Constants.Roles.Expert };
+        private static readonly HashSet<string> AllowedRoles = new HashSet<string> { RolesConstants.Candidate, RolesConstants.Expert };
 
         /// <summary>
         /// Show register page

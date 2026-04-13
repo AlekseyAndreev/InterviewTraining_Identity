@@ -12,15 +12,41 @@ using Duende.IdentityModel;
 
 namespace SevSharks.Identity.BusinessLogic;
 
-public class CreateUserService
+public class UserService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly Context _context;
 
-    public CreateUserService(UserManager<ApplicationUser> userManager, Context context)
+    public UserService(UserManager<ApplicationUser> userManager, Context context)
     {
         _userManager = userManager;
         _context = context;
+    }
+
+    public async Task<(ApplicationUser user, List<string> roles)> GetUserInfoById(string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            throw new Exception("Не найден пользователь");
+        }
+
+        var isCandidate = await _userManager.IsInRoleAsync(user, RolesConstants.Candidate);
+        var isExpert = await _userManager.IsInRoleAsync(user, RolesConstants.Candidate);
+
+        List<string> rolesResult = new List<string>();
+
+        if (isCandidate)
+        {
+            rolesResult.Add(RolesConstants.Candidate);
+        }
+
+        if (isExpert)
+        {
+            rolesResult.Add(RolesConstants.Expert);
+        }
+
+        return (user, rolesResult);
     }
 
     public async Task<ApplicationUser> CreateUser(CreateUserDto userDto)
@@ -109,5 +135,24 @@ public class CreateUserService
         }
 
         throw new Exception(result.Errors.First().Description);
+    }
+
+    public async Task<ApplicationUser> UpdateUserRoles(string userName, string[] roles)
+    {
+        var user = await _userManager.FindByNameAsync(userName);
+        if (user != null)
+        {
+            var existingUser = _context.Users
+                .FirstOrDefault(u => u.Id == user.Id);
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return user;
+            }
+            throw new Exception(result.Errors.First().Description);
+        }
+
+        throw new Exception("Не найден пользователь");
     }
 }

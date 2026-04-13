@@ -74,7 +74,7 @@ public static class IdentityServerConfigurator
         services.AddTransient<IResourceOwnerPasswordValidator, ResourceOwnerPasswordValidator>();
         services.AddTransient<IUserClaimsPrincipalFactory<ApplicationUser>,
             UserClaimsFactory<ApplicationUser, ApplicationRole>>();
-        services.AddTransient<CreateUserService, CreateUserService>();
+        services.AddTransient<UserService, UserService>();
 
         return services;
     }

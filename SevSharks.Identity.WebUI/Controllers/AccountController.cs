@@ -41,7 +41,7 @@ namespace SevSharks.Identity.WebUI.Controllers
         private readonly IAuthenticationSchemeProvider _schemeProvider;
         private readonly IEventService _events;
         private readonly IConfiguration _configuration;
-        private readonly CreateUserService _createUserService;
+        private readonly UserService _userService;
         private readonly ExternalSystemAccountService _externalSystemAccountService;
         private readonly ILogger<AccountController> _logger;
 
@@ -61,7 +61,7 @@ namespace SevSharks.Identity.WebUI.Controllers
             SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             IEventService events,
-            CreateUserService createUserService,
+            UserService userService,
             IConfiguration configuration,
             ExternalSystemAccountService externalSystemAccountService,
             ILogger<AccountController> logger)
@@ -72,7 +72,7 @@ namespace SevSharks.Identity.WebUI.Controllers
             _events = events;
             _signInManager = signInManager;
             _userManager = userManager;
-            _createUserService = createUserService;
+            _userService = userService;
             _configuration = configuration;
             _externalSystemAccountService = externalSystemAccountService;
             _logger = logger;
@@ -140,7 +140,7 @@ namespace SevSharks.Identity.WebUI.Controllers
                     Roles = roles
                 };
 
-                user = await _createUserService.CreateUser(userDto);
+                user = await _userService.CreateUser(userDto);
             }
             catch (Exception e)
             {
