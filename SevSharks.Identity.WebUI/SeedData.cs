@@ -152,8 +152,12 @@ public class SeedData
                     "http://localhost:5108",
                     "https://localhost:5108",
                     "http://webspa",
+
                     "http://interview-training.site:5108",
                     "https://interview-training.site:5108",
+
+                    "https://interview-training.site:53384",
+
                     "http://interview-training.site",
                     "https://interview-training.site",
                     "https://interview-training.site:8182",
