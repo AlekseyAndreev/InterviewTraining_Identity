@@ -4,6 +4,7 @@ using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Stores;
 using SevSharks.Identity.BusinessLogic;
 using SevSharks.Identity.BusinessLogic.Models;
+using SevSharks.Identity.BusinessLogic.Services;
 using SevSharks.Identity.DataAccess.Models;
 using SevSharks.Identity.WebUI.Helpers;
 using SevSharks.Identity.WebUI.Models;
@@ -43,6 +44,7 @@ namespace SevSharks.Identity.WebUI.Controllers
         private readonly IConfiguration _configuration;
         private readonly UserService _userService;
         private readonly ExternalSystemAccountService _externalSystemAccountService;
+        private readonly IUserSyncWebhookService _userSyncWebhookService;
         private readonly ILogger<AccountController> _logger;
 
         /// <summary>
@@ -64,6 +66,7 @@ namespace SevSharks.Identity.WebUI.Controllers
             UserService userService,
             IConfiguration configuration,
             ExternalSystemAccountService externalSystemAccountService,
+            IUserSyncWebhookService userSyncWebhookService,
             ILogger<AccountController> logger)
         {
             _interaction = interaction;
@@ -75,6 +78,7 @@ namespace SevSharks.Identity.WebUI.Controllers
             _userService = userService;
             _configuration = configuration;
             _externalSystemAccountService = externalSystemAccountService;
+            _userSyncWebhookService = userSyncWebhookService;
             _logger = logger;
         }
 
@@ -311,6 +315,23 @@ namespace SevSharks.Identity.WebUI.Controllers
                 return bool.TryParse(_configuration["AllowRegister"], out var result) && result;
             }
         }
+
+        /// <summary>
+        /// Отправить уведомление о создании пользователя
+        /// </summary>
+        private async Task NotifyUserCreatedAsync(string userId, IEnumerable<string> roles)
+        {
+            try
+            {
+                await _userSyncWebhookService.NotifyUserChangedAsync(userId, roles);
+            }
+            catch (Exception ex)
+            {
+                // Логируем ошибку, но не прерываем процесс регистрации
+                _logger.LogError(ex, "Ошибка при отправке webhook для пользователя {UserId}", userId);
+            }
+        }
+
         #endregion
     }
 }

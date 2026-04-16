@@ -4,11 +4,12 @@
     <Company>@SevastopolSharks</Company>
     <Authors>@SevastopolSharks</Authors>
     <Product>TogetherByTaxi</Product>
-  </PropertyGroup>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Duende.IdentityServer" Version="7.4.7" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.6" />
+   <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
   </ItemGroup>
 
   <ItemGroup>

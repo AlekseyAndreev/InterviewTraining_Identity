@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SevSharks.Identity.BusinessLogic;
+using SevSharks.Identity.BusinessLogic.Services;
 using SevSharks.Identity.DataAccess.Models;
 using SevSharks.Identity.DataAccess;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,10 @@ public static class IdentityServerConfigurator
         services.AddSingleton(options);
 
         string connectionString = ConfigurationHelper.GetConnectionStringFromConfig(configuration);
+
+        // Добавляем HttpClientFactory для webhook
+        services.AddHttpClient();
+        services.AddScoped<IUserSyncWebhookService, UserSyncWebhookService>();
 
         var identityServerBuilder = services
             .AddIdentityServer();

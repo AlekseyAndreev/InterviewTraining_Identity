@@ -81,6 +81,9 @@ namespace SevSharks.Identity.WebUI.Controllers
 
                 if (changeUserRolesViewModel.IsSucceed && !changeUserRolesViewModel.ErrorMessages.Any())
                 {
+                    // Отправляем webhook для синхронизации с API
+                    await NotifyUserCreatedAsync(user.Id, changeUserRolesViewModel.Roles);
+
                     return await SignInAndRedirect(user, changeUserRolesViewModel.ReturnUrl);
                 }
             }

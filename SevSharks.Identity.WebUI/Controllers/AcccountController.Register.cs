@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SevSharks.Identity.BusinessLogic;
+using SevSharks.Identity.BusinessLogic.Services;
 using SevSharks.Identity.WebUI.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,6 +87,9 @@ namespace SevSharks.Identity.WebUI.Controllers
 
                 if (registerViewModel.IsSucceed && !registerViewModel.ErrorMessages.Any())
                 {
+                    // Отправляем webhook для синхронизации с API
+                    await NotifyUserCreatedAsync(user.Id, registerViewModel.Roles);
+
                     //TODO: GenerateEmailConfirmationTokenAsync
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     //var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
