@@ -14,7 +14,7 @@
 
 <h2>@ViewBag.Title</h2>
 <div>
-    <h3><a href="https://interview-training.site">Назад в основой сайт</a></h3>
+    <h3><a href="@Configuration["MainUrl"]">Назад в основой сайт</a></h3>
 </div>
 <div style="width: 300px;">
     <form asp-controller="Account" asp-action="Register" method="post">
