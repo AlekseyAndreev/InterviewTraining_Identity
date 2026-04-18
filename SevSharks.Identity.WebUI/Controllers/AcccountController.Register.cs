@@ -87,8 +87,7 @@ namespace SevSharks.Identity.WebUI.Controllers
 
                 if (registerViewModel.IsSucceed && !registerViewModel.ErrorMessages.Any())
                 {
-                    // Отправляем webhook для синхронизации с API
-                    await NotifyUserCreatedAsync(user.Id, registerViewModel.Roles);
+                    await NotifyUserChangedAsync(user.Id, registerViewModel.Roles);
 
                     //TODO: GenerateEmailConfirmationTokenAsync
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

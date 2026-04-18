@@ -319,7 +319,7 @@ namespace SevSharks.Identity.WebUI.Controllers
         /// <summary>
         /// Отправить уведомление о создании пользователя
         /// </summary>
-        private async Task NotifyUserCreatedAsync(string userId, IEnumerable<string> roles)
+        private async Task NotifyUserChangedAsync(string userId, IEnumerable<string> roles)
         {
             try
             {
