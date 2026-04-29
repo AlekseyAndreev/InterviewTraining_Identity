@@ -1,15 +1,16 @@
 ﻿using System;
-using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MimeKit;
 using SevSharks.Identity.WebUI.Options;
 
 namespace SevSharks.Identity.WebUI.Services;
 
 ///<summary>
-/// SMTP-based email sender implementation using Yandex mail server
+/// SMTP-based email sender implementation using Yandex mail server (MailKit)
 ///</summary>
 public class SmtpEmailSender : IEmailSender
 {
@@ -31,13 +32,13 @@ public class SmtpEmailSender : IEmailSender
     {
         var subject = "Подтверждение email адреса";
         var htmlMessage = $@"
-           <html>
-           <body style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
-               <h2 style=""color: #333;"">Подтверждение email адреса</h2>
-               <p>Здравствуйте!</p>
-               <p>Для подтверждения вашего email адреса, пожалуйста, нажмите на кнопку ниже:</p>
-               <div style=""text-align: center; margin: 30px 0;"">
-                   <a href=""{confirmationLink}"" 
+        <html>
+        <body style=""font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;"">
+            <h2 style=""color: #333;"">Подтверждение email адреса</h2>
+            <p>Здравствуйте!</p>
+            <p>Для подтверждения вашего email адреса, пожалуйста, нажмите на кнопку ниже:</p>
+            <div style=""text-align: center; margin: 30px 0;"">
+                <a href=""{confirmationLink}"" 
                        style=""background-color: #4CAF50; 
                               color: white; 
                               padding: 12px 30px; 
@@ -45,16 +46,16 @@ public class SmtpEmailSender : IEmailSender
                               border-radius: 4px;
                               font-size: 16px;"">
                         Подтвердить email
-                   </a>
-               </div>
-               <p>Или скопируйте и вставьте следующую ссылку в адресную строку браузера:</p>
-               <p style=""word-break: break-all; color: #666;"">{confirmationLink}</p>
-               <hr style=""border: none; border-top: 1px solid #eee; margin: 20px 0;"">
-               <p style=""color: #888; font-size: 12px;"">
+                </a>
+            </div>
+            <p>Или скопируйте и вставьте следующую ссылку в адресную строку браузера:</p>
+            <p style=""word-break: break-all; color: #666;"">{confirmationLink}</p>
+            <hr style=""border: none; border-top: 1px solid #eee; margin: 20px 0;"">
+            <p style=""color: #888; font-size: 12px;"">
                     Если вы не регистрировались на нашем сайте, просто проигнорируйте это письмо.
-               </p>
-           </body>
-           </html>";
+            </p>
+        </body>
+        </html>";
 
         await SendEmailAsync(email, subject, htmlMessage);
     }
@@ -70,54 +71,56 @@ public class SmtpEmailSender : IEmailSender
             throw new InvalidOperationException("SMTP sender email is not configured");
         }
 
+        if (string.IsNullOrWhiteSpace(_smtpOptions.Username) || string.IsNullOrWhiteSpace(_smtpOptions.Password))
+        {
+            _logger.LogError("SMTP credentials are not configured");
+            throw new InvalidOperationException("SMTP credentials (Username/Password) are not configured");
+        }
+
+        _logger.LogInformation(
+            "SMTP Config: Host={Host}, Port={Port}, Username={Username}",
+            _smtpOptions.Host, _smtpOptions.Port, _smtpOptions.Username);
+
         try
         {
-            using var mailMessage = new MailMessage
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_smtpOptions.SenderName, _smtpOptions.SenderEmail));
+            message.To.Add(MailboxAddress.Parse(email));
+            message.Subject = subject;
+
+            var bodyBuilder = new BodyBuilder
             {
-                From = new MailAddress(_smtpOptions.SenderEmail, _smtpOptions.SenderName),
-                Subject = subject,
-                Body = htmlMessage,
-                IsBodyHtml = true
+                HtmlBody = htmlMessage
             };
-            mailMessage.To.Add(new MailAddress(email));
+            message.Body = bodyBuilder.ToMessageBody();
 
-            using var smtpClient = new SmtpClient(_smtpOptions.Host, _smtpOptions.Port)
-            {
-                EnableSsl = _smtpOptions.EnableSsl,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                Timeout = _smtpOptions.TimeoutMs
-            };
+            using var client = new SmtpClient();
 
-            // Configure credentials
-            if (!string.IsNullOrWhiteSpace(_smtpOptions.Username))
-            {
-                smtpClient.Credentials = new NetworkCredential(
-                    _smtpOptions.Username,
-                    _smtpOptions.Password);
-            }
+            // Для Яндекса используем порт 587 с STARTTLS или порт 465 с SSL
+            var secureSocketOptions = _smtpOptions.Port == 465
+                ? SecureSocketOptions.SslOnConnect
+                : SecureSocketOptions.StartTls;
 
-            // For Yandex SMTP with port 587, use STARTTLS
-            if (_smtpOptions.UseStartTls && _smtpOptions.Port == 587)
-            {
-                smtpClient.EnableSsl = true;
-            }
+            await client.ConnectAsync(
+                _smtpOptions.Host,
+                _smtpOptions.Port,
+                secureSocketOptions);
+
+            // Аутентификация
+            await client.AuthenticateAsync(
+                _smtpOptions.Username,
+                _smtpOptions.Password);
 
             _logger.LogInformation(
                 "Sending email to {Email} with subject: {Subject} via SMTP {Host}:{Port}",
                 email, subject, _smtpOptions.Host, _smtpOptions.Port);
 
-            await smtpClient.SendMailAsync(mailMessage);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
 
             _logger.LogInformation(
                 "Successfully sent email to {Email} with subject: {Subject}",
                 email, subject);
-        }
-        catch (SmtpException ex)
-        {
-            _logger.LogError(ex,
-                "SMTP error while sending email to {Email}: {ErrorCode} - {Message}",
-                email, ex.StatusCode, ex.Message);
-            throw;
         }
         catch (Exception ex)
         {
