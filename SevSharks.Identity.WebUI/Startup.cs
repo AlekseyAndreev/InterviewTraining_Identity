@@ -4,39 +4,42 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SevSharks.Identity.WebUI.Configurations;
+using SevSharks.Identity.WebUI.Options;
+using SevSharks.Identity.WebUI.Services;
+using System;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Logging;
 
 namespace SevSharks.Identity.WebUI;
 
-/// <summary>
+///<summary>
 /// Startup
-/// </summary>
+///</summary>
 public class Startup
 {
-    /// <summary>
+    ///<summary>
     /// Constructor
-    /// </summary>
+    ///</summary>
     public Startup(IConfiguration configuration, IWebHostEnvironment environment)
     {
         Configuration = configuration;
         Environment = environment;
     }
 
-    /// <summary>
+    ///<summary>
     /// IConfiguration
-    /// </summary>
+    ///</summary>
     public IConfiguration Configuration { get; }
 
-    /// <summary>
+    ///<summary>
     /// IConfiguration
-    /// </summary>
+    ///</summary>
     public IWebHostEnvironment Environment { get; }
 
-    /// <summary>
+    ///<summary>
     /// CreateWebHostBuilder
-    /// </summary>
+    ///</summary>
     public static IHostBuilder CreateHostBuilder(string[] args) =>
         Host.CreateDefaultBuilder(args)
                .ConfigureAppConfiguration((hostingContext, config) =>
@@ -61,9 +64,9 @@ public class Startup
                    configure.ValidateScopes = true;
                });
 
-    /// <summary>
+    ///<summary>
     /// ConfigureServices
-    /// </summary>
+    ///</summary>
     public void ConfigureServices(IServiceCollection services)
     {
         services
@@ -78,9 +81,24 @@ public class Startup
             .AddDataAnnotationsLocalization()
             .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+        // Add session support for TempData
+        services.AddDistributedMemoryCache();
+        services.AddSession(options =>
+        {
+            options.IdleTimeout = TimeSpan.FromMinutes(30);
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+            options.Cookie.Name = ".SevSharks.Identity.Session";
+        });
+
+        // Configure SMTP options
+        services.Configure<SmtpOptions>(Configuration.GetSection("Smtp"));
+
         services.AddDb(Configuration);
         services.AddIdentityServerForSevShark(Configuration, Environment);
         services.AddSevSharksAuthentication();
+
+        services.AddScoped<IEmailSender, SmtpEmailSender>();
 
         services.AddSingleton(Configuration);
         services.AddSingleton((IConfigurationRoot) Configuration);
@@ -113,6 +131,7 @@ public class Startup
 
         app.UseStaticFiles()
             .UseRouting()
+            .UseSession()
             .UseResponseCompression()
             .UseAuthentication()
             .UseHttpsRedirection()

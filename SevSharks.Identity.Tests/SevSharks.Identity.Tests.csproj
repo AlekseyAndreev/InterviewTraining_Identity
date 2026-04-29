@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
@@ -6,6 +6,7 @@
 
 <ItemGroup>
     <PackageReference Include="AutoFixture" Version="4.18.1" />
+   <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.6" />
    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.6" />
    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
@@ -22,6 +23,7 @@
 <ItemGroup>
     <ProjectReference Include="..\SevSharks.Identity.BusinessLogic\SevSharks.Identity.BusinessLogic.csproj" />
    <ProjectReference Include="..\SevSharks.Identity.DataAccess\SevSharks.Identity.DataAccess.csproj" />
+   <ProjectReference Include="..\SevSharks.Identity.WebUI\SevSharks.Identity.WebUI.csproj" />
   </ItemGroup>
 
 </Project>

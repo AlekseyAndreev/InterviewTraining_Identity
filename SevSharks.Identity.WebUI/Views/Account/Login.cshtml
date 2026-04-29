@@ -45,6 +45,16 @@
         <h1>Вход в приложение</h1>
     </div>
 
+    @if (TempData["EmailConfirmationMessage"] != null)
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @TempData["EmailConfirmationMessage"]
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
     <partial name="_ValidationSummary" />
 
     <div class="row">

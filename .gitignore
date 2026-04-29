@@ -331,3 +331,5 @@ ASALocalRun/
 
 
 AuthenticationConfigurator.cs.txt
+/SevSharks.Identity.WebUI/secrets/appsettings.secrets.json
+/SevSharks.Identity.WebUI/secrets/appsettings.secrets.json.example

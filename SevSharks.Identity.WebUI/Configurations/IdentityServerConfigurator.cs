@@ -69,6 +69,7 @@ public static class IdentityServerConfigurator
                 opt.Password.RequiredLength = 6;
                 opt.User.AllowedUserNameCharacters = null;
                 opt.User.RequireUniqueEmail = false;
+                opt.SignIn.RequireConfirmedEmail = true;
             })
             .AddEntityFrameworkStores<Context>()
             .AddDefaultTokenProviders();

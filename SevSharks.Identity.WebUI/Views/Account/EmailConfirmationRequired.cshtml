@@ -1,0 +1,27 @@
+@model EmailConfirmationRequiredViewModel
+@{
+    ViewData["Title"] = "Подтверждение email";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h2>Подтверждение email</h2>
+                </div>
+                <div class="card-body">
+                    <p>Для входа в систему необходимо подтвердить ваш email: <strong>@Model.Email</strong></p>
+                    <p>Мы отправили письмо на указанный адрес. Проверьте почту и перейдите по ссылке из письма.</p>
+                    
+                    <form asp-action="ResendConfirmationEmail" asp-controller="Account" method="post">
+                        <input type="hidden" asp-for="Email" />
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <button type="submit" class="btn btn-outline-primary">Отправить письмо повторно</button>
+                        <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-link">Вернуться к входу</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
