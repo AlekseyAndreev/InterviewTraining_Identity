@@ -76,6 +76,11 @@ namespace SevSharks.Identity.WebUI.Models
         public string ExternalLoginScheme => IsExternalLoginOnly ? ExternalProviders?.SingleOrDefault()?.AuthenticationScheme : null;
 
         /// <summary>
+        /// RedirectToLoginAfterEmailConfirmation
+        /// </summary>
+        public bool RedirectToLoginAfterEmailConfirmation { get; set; }
+
+        /// <summary>
         /// RedirectToRegister
         /// </summary>
         public bool RedirectToRegister { get; set; }

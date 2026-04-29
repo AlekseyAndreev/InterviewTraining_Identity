@@ -13,14 +13,21 @@ namespace SevSharks.Identity.WebUI.Controllers;
 
 public partial class AccountController
 {
-    /// <summary>
+    ///<summary>
     /// Show login page
-    /// </summary>
+    ///</summary>
     [HttpGet]
     public async Task<IActionResult> Login(string returnUrl)
     {
         ViewData["ReturnUrl"] = returnUrl;
         var vm = await BuildLoginViewModelAsync(returnUrl);
+        if (vm.RedirectToLoginAfterEmailConfirmation)
+        {
+            TempData["ReturnUrl"] = returnUrl;
+            TempData["EmailConfirmationMessage"] = "На ваш email отправлено письмо для подтверждения. Пожалуйста, проверьте почту и подтвердите свой адрес.";
+            return View(vm);
+        }
+
         if (vm.RedirectToRegister)
         {
             TempData["ReturnUrl"] = returnUrl;
@@ -41,9 +48,9 @@ public partial class AccountController
         return View(vm);
     }
 
-    /// <summary>
+    ///<summary>
     /// Handle postback from username/password login
-    /// </summary>
+    ///</summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginViewModel model)
@@ -132,6 +139,7 @@ public partial class AccountController
             ReturnUrl = returnUrl,
             Login = context?.LoginHint,
             ExternalProviders = providers.ToArray(),
+            RedirectToLoginAfterEmailConfirmation = GetBoolWithName(context, "redirect_to_login_after_email_confirmation"),
             RedirectToRegister = GetBoolWithName(context, "redirect_to_register"),
             RedirectToChangeRoles = GetBoolWithName(context, "redirect_to_change_roles"),
             ClientId = context?.Client?.ClientId

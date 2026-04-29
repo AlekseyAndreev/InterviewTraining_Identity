@@ -1,4 +1,4 @@
-﻿﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SevSharks.Identity.BusinessLogic;
 using SevSharks.Identity.WebUI.Extensions;
 using SevSharks.Identity.WebUI.Models;
@@ -11,14 +11,14 @@ namespace SevSharks.Identity.WebUI.Controllers;
 
 public partial class AccountController
 {
-    /// <summary>
+    ///<summary>
     /// Допустимые роли для регистрации
-    /// </summary>
+    ///</summary>
     private static readonly HashSet<string> AllowedRoles = new HashSet<string> { RolesConstants.Candidate, RolesConstants.Expert };
 
-    /// <summary>
+    ///<summary>
     /// Show register page
-    /// </summary>
+    ///</summary>
     [HttpGet]
     public IActionResult Register(string returnUrl)
     {
@@ -41,9 +41,9 @@ public partial class AccountController
         return View(registerViewModel);
     }
 
-    /// <summary>
+    ///<summary>
     /// Post register page
-    /// </summary>
+    ///</summary>
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
@@ -90,11 +90,13 @@ public partial class AccountController
                 await NotifyUserChangedAsync(user.Id, registerViewModel.Roles);
 
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme);
+                // Передаём returnUrl в ссылку подтверждения
+                var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme, registerViewModel.ReturnUrl);
                 await _emailSender.SendEmailConfirmationAsync(registerViewModel.Login, callbackUrl);
 
-                TempData["EmailConfirmationMessage"] = "На ваш email отправлено письмо для подтверждения. Пожалуйста, проверьте почту и подтвердите свой адрес.";
-                return RedirectToAction("Login", new { returnUrl = registerViewModel.ReturnUrl });
+                // Добавляем параметр для перенаправления на Login с сообщением о подтверждении email
+                var loginReturnUrl = BuildReturnUrlWithEmailConfirmation(registerViewModel.ReturnUrl);
+                return RedirectToAction("Login", new { returnUrl = loginReturnUrl });
             }
         }
         else
@@ -119,5 +121,19 @@ public partial class AccountController
             }
         }
         return View(registerViewModel);
+    }
+
+    ///<summary>
+    /// Builds a return URL with email confirmation flag
+    ///</summary>
+    private string BuildReturnUrlWithEmailConfirmation(string originalReturnUrl)
+    {
+        if (string.IsNullOrEmpty(originalReturnUrl))
+        {
+            return null;
+        }
+
+        var separator = originalReturnUrl.Contains('?') ? "&" : "?";
+        return $"{originalReturnUrl}{separator}redirect_to_login_after_email_confirmation=true";
     }
 }
