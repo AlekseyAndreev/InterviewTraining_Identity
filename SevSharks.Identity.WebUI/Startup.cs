@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
+using Serilog;
 using SevSharks.Identity.WebUI.Configurations;
 using SevSharks.Identity.WebUI.Options;
 using SevSharks.Identity.WebUI.Services;
@@ -51,15 +50,9 @@ public class Startup
                    config.AddEnvironmentVariables();
                    config.AddCommandLine(args);
                })
-                .ConfigureLogging((hostingContext, logging) =>
+                .UseSerilog((hostingContext, loggerConfig) =>
                 {
-                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole(options =>
-                    {
-                        options.FormatterName = ConsoleFormatterNames.Json;
-                    });
-                    logging.AddDebug();
-                    logging.AddEventSourceLogger();
+                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration);
                 })
                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
                .UseDefaultServiceProvider(configure =>

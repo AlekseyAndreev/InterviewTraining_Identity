@@ -22,6 +22,7 @@
    <PackageReference Include="Duende.IdentityServer" Version="7.4.7" />
    <PackageReference Include="Duende.IdentityServer.AspNetIdentity" Version="7.4.7" />
    <PackageReference Include="Duende.IdentityServer.EntityFramework" Version="7.4.7" />
+   <PackageReference Include="Elastic.Serilog.Sinks" Version="9.0.0" />
    <PackageReference Include="Flurl" Version="4.0.0" />
    <PackageReference Include="MailKit" Version="4.16.0" />
    <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="10.0.7" />
@@ -32,8 +33,11 @@
      <PrivateAssets>all</PrivateAssets>
      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
    </PackageReference>
-   <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.17.0" />
+   <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.18.0" />
    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+   <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+   <PackageReference Include="Serilog.Enrichers.Environment" Version="3.0.1" />
+   <PackageReference Include="Serilog.Enrichers.Thread" Version="4.0.0" />
  </ItemGroup>
  <ItemGroup>
    <ProjectReference Include="..\SevSharks.Identity.BusinessLogic\SevSharks.Identity.BusinessLogic.csproj" />
