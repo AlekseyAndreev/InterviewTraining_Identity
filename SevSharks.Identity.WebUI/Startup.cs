@@ -1,15 +1,16 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using SevSharks.Identity.WebUI.Configurations;
 using SevSharks.Identity.WebUI.Options;
 using SevSharks.Identity.WebUI.Services;
 using System;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.Extensions.Logging;
 
 namespace SevSharks.Identity.WebUI;
 
@@ -53,7 +54,10 @@ public class Startup
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole();
+                    logging.AddConsole(options =>
+                    {
+                        options.FormatterName = ConsoleFormatterNames.Json;
+                    });
                     logging.AddDebug();
                     logging.AddEventSourceLogger();
                 })

@@ -42,12 +42,15 @@ public partial class AccountController
             }
         }
 
+        // Очищаем returnUrl от параметров IdentityServer
+        var cleanReturnUrl = CleanReturnUrl(decodedReturnUrl);
+
         var result = await _userManager.ConfirmEmailAsync(user, code);
         if (result.Succeeded)
         {
             TempData["EmailConfirmationMessage"] = "Ваш email успешно подтверждён. Теперь вы можете войти в систему.";
             // Формируем URL для возврата с флагом подтверждения email
-            var loginUrl = BuildLoginUrlWithConfirmation(decodedReturnUrl);
+            var loginUrl = BuildLoginUrlWithConfirmation(cleanReturnUrl);
             return Redirect(loginUrl);
         }
 
@@ -96,7 +99,9 @@ public partial class AccountController
         }
 
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme, model.ReturnUrl);
+        // Очищаем returnUrl от параметров IdentityServer
+        var cleanReturnUrl = CleanReturnUrl(model.ReturnUrl);
+        var callbackUrl = Url.EmailConfirmationLink(user.Id, code, Request.Scheme, cleanReturnUrl);
         await _emailSender.SendEmailConfirmationAsync(model.Email, callbackUrl);
 
         TempData["EmailConfirmationMessage"] = "Письмо для подтверждения email отправлено повторно. Пожалуйста, проверьте почту.";
@@ -116,5 +121,44 @@ public partial class AccountController
             return $"{loginUrl}?returnUrl={returnUrl}&redirect_to_login_after_email_confirmation=true";
         }
         return $"{loginUrl}?redirect_to_login_after_email_confirmation=true";
+    }
+
+    ///<summary>
+    /// Cleans returnUrl from IdentityServer-specific parameters
+    ///</summary>
+    private string CleanReturnUrl(string returnUrl)
+    {
+        if (string.IsNullOrEmpty(returnUrl))
+        {
+            return null;
+        }
+
+        // Параметры IdentityServer, которые не нужны в ссылке подтверждения
+        var paramsToRemove = new[]
+        {
+            "redirect_to_register",
+            "redirect_to_login_after_email_confirmation",
+            "redirect_to_change_roles"
+        };
+
+        try
+        {
+            var uri = new Uri(returnUrl.Contains("://") ? returnUrl : "http://temp" + returnUrl);
+            var queryParams = System.Web.HttpUtility.ParseQueryString(uri.Query);
+            foreach (var param in paramsToRemove)
+            {
+                queryParams.Remove(param);
+            }
+
+            var baseUrl = uri.GetLeftPart(UriPartial.Path);
+            var newQuery = queryParams.ToString();
+            return string.IsNullOrEmpty(newQuery) ? baseUrl : $"{baseUrl}?{newQuery}";
+        }
+        catch
+        {
+            // Если что-то пошло не так, возвращаем базовый URL без параметров
+            var questionMarkIndex = returnUrl.IndexOf('?');
+            return questionMarkIndex > 0 ? returnUrl.Substring(0, questionMarkIndex) : returnUrl;
+        }
     }
 }
