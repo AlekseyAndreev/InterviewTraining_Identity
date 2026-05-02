@@ -79,7 +79,6 @@ namespace SevSharks.Identity.WebUI.Configurations
         /// 
         /// Generate 
         /// </summary>
-        /// <param name="file"></param>
         /// <returns></returns>
         public RSAParameters GetKeyParameters()
         {
