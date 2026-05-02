@@ -30,6 +30,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console(
         outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
     .WriteTo.Elasticsearch()
+    .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
 try
