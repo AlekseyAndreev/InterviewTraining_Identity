@@ -4,9 +4,6 @@
    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
  </PropertyGroup>
- <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-   <DocumentationFile></DocumentationFile>
- </PropertyGroup>
  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
    <DocumentationFile>bin\Release\netcoreapp2.1\IT2.Auth.Identity.WebUI.xml</DocumentationFile>
  </PropertyGroup>
