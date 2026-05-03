@@ -171,13 +171,6 @@ public partial class AccountController : Controller
     {
         await _signInManager.SignInAsync(user, isPersistent: false);
 
-        if (!string.IsNullOrEmpty(returnUrl))
-        {
-            if (returnUrl.StartsWith("http://temp"))
-            {
-                returnUrl = returnUrl.Replace("http://temp", "");
-            }
-        }
 
         if (_interaction.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
         {

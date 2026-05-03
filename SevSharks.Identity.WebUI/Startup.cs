@@ -119,7 +119,8 @@ public class Startup
                 policy.WithOrigins($"{uri.Scheme}://{uri.Host}:{uri.Port}")
                       .AllowAnyMethod()
                       .AllowAnyHeader()
-                      .AllowCredentials();
+                      .AllowCredentials()
+                      .SetPreflightMaxAge(TimeSpan.FromMinutes(1));
             });
         });
 
@@ -155,10 +156,10 @@ public class Startup
         app.UseStaticFiles()
             .UseRouting()
             .UseCors("AllowSpa")
+            .UseHttpsRedirection()
             .UseSession()
             .UseResponseCompression()
             .UseAuthentication()
-            .UseHttpsRedirection()
             .UseAuthorization()
             .UseEndpoints(endpoints => endpoints.MapDefaultControllerRoute())
             .UseIdentityServer();

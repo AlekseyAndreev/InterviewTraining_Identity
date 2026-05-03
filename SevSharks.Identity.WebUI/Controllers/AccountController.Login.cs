@@ -13,6 +13,9 @@ namespace SevSharks.Identity.WebUI.Controllers;
 
 public partial class AccountController
 {
+    public const string TempDataNameRedirectToLoginAfterRegister = "RedirectToLoginAfterRegister";
+    public const string TempDataNameRedirectToLoginAfterConfirmation = "RedirectToLoginAfterConfirmation";
+
     ///<summary>
     /// Show login page
     ///</summary>
@@ -21,10 +24,17 @@ public partial class AccountController
     {
         ViewData["ReturnUrl"] = returnUrl;
         var vm = await BuildLoginViewModelAsync(returnUrl);
-        if (vm.RedirectToLoginAfterEmailConfirmation)
+        bool redirectToLoginAfterRegister = GetBoolFromTempData(TempDataNameRedirectToLoginAfterRegister);
+        if (vm.RedirectToLoginAfterEmailConfirmation || redirectToLoginAfterRegister)
         {
-            TempData["ReturnUrl"] = returnUrl;
             TempData["EmailConfirmationMessage"] = "На ваш email отправлено письмо для подтверждения. Пожалуйста, проверьте почту и подтвердите свой адрес.";
+            return View(vm);
+        }
+
+        bool redirectToLoginAfterConfirmation = GetBoolFromTempData(TempDataNameRedirectToLoginAfterConfirmation);
+        if (redirectToLoginAfterConfirmation)
+        {
+            TempData["EmailConfirmationMessage"] = "Ваш email успешно подтверждён. Теперь вы можете войти в систему.";
             return View(vm);
         }
 
@@ -84,6 +94,19 @@ public partial class AccountController
             var user = await _userManager.FindByNameAsync(model.Login);
             return await SignInAndRedirect(user, model.ReturnUrl);
         }
+    }
+
+    private bool GetBoolFromTempData(string tempDataName)
+    {
+        bool result = false;
+        var redirectToLoginAfterRegisterObject = TempData[tempDataName];
+        if (redirectToLoginAfterRegisterObject != null)
+        {
+            result = true;
+            TempData[tempDataName] = null;
+        }
+
+        return result;
     }
 
     private async Task<LoginViewModel> BuildLoginViewModelAsync(string returnUrl)
