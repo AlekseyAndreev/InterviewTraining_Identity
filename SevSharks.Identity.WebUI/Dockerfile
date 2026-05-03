@@ -1,4 +1,4 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+﻿# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 # This stage is used when running from VS in fast mode (Default for Debug configuration)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
@@ -28,5 +28,11 @@ RUN dotnet publish "./SevSharks.Identity.WebUI.csproj" -c $BUILD_CONFIGURATION -
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final
 WORKDIR /app
+
+# Создаём директории для хранения ключей
+RUN mkdir -p /app/DataProtectionKeys && \
+    mkdir -p /app/keys && \
+    chown -R 1000:1000 /app
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "SevSharks.Identity.WebUI.dll"]

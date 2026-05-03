@@ -26,7 +26,14 @@ namespace SevSharks.Identity.WebUI.Configurations
         {
             get
             {
-                return Path.Combine(_environment.ContentRootPath, "rsakey.json");
+                // Используем /app/keys для Docker или ContentRootPath для локальной разработки
+                var keysPath = Environment.GetEnvironmentVariable("KEYS_PATH")
+                    ?? Path.Combine(_environment.ContentRootPath, "keys");
+                if (!Directory.Exists(keysPath))
+                {
+                    Directory.CreateDirectory(keysPath);
+                }
+                return Path.Combine(keysPath, "rsakey.json");
             }
         }
         private readonly IWebHostEnvironment _environment;

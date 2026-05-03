@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using SevSharks.Identity.WebUI.Configurations;
 using SevSharks.Identity.WebUI.Options;
 using SevSharks.Identity.WebUI.Services;
 using System;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace SevSharks.Identity.WebUI;
@@ -66,6 +68,13 @@ public class Startup
     ///</summary>
     public void ConfigureServices(IServiceCollection services)
     {
+        // Настройка Data Protection для сохранения ключей в файловую систему
+        // Это решает проблему "Error unprotecting the IdentityServer signing key"
+        var keysDirectory = Path.Combine(Environment.ContentRootPath, "DataProtectionKeys");
+        services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo(keysDirectory))
+            .SetApplicationName("SevSharks.Identity");
+
         services
             .AddResponseCompression()
             .AddHttpContextAccessor()

@@ -7,9 +7,9 @@ using SevSharks.Identity.BusinessLogic.Services;
 using SevSharks.Identity.DataAccess.Models;
 using SevSharks.Identity.DataAccess;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Duende.IdentityServer.Services;
 using Duende.IdentityServer.Validation;
+using System;
 
 namespace SevSharks.Identity.WebUI.Configurations;
 
@@ -29,27 +29,23 @@ public static class IdentityServerConfigurator
         var identityServerBuilder = services
             .AddIdentityServer();
 
-        //var cert = new X509Certificate2("certificates/togetherbytaxi.ru.pfx", "12345678");
-        //identityServerBuilder.AddSigningCredential(cert);
-        // TODO add certificate
-        if (environment.IsDevelopment() || environment.IsEnvironment("Local") || true)
+        // Регистрируем RSA Key Service как singleton
+        services.AddSingleton<RsaKeyService>(sp =>
         {
-            identityServerBuilder.AddDeveloperSigningCredential();
-        }
-        else
-        {
-            /*
-            string certificateData = configuration["Certificate:Data"];
-            string certificatePassword = configuration["Certificate:Password"];
-            identityServerBuilder.AddSigningCredential(new X509Certificate2(
-                Convert.FromBase64String(certificateData),
-                configuration.GetValue<string>(certificatePassword))); 
-            */
-            /*
-            var cert = new X509Certificate2("certificates\\togetherbytaxi.ru.pfx", "12345678");
-            identityServerBuilder.AddSigningCredential(cert);
-            */
-        }
+            // Ключи будут храниться 365 дней
+            var rsaKeyService = new RsaKeyService(environment, TimeSpan.FromDays(365));
+            // При первом запуске генерируем ключ, если его нет
+            if (rsaKeyService.NeedsUpdate())
+            {
+                rsaKeyService.GenerateKeyAndSave();
+            }
+            return rsaKeyService;
+        });
+
+        // Используем RSA ключи из файла вместо DeveloperSigningCredential
+        var rsaKeyService = services.BuildServiceProvider().GetRequiredService<RsaKeyService>();
+        var rsaSecurityKey = rsaKeyService.GetKey();
+        identityServerBuilder.AddSigningCredential(rsaSecurityKey, Duende.IdentityServer.IdentityServerConstants.RsaSigningAlgorithm.RS256);
 
         identityServerBuilder.AddConfigurationStore(option =>
                 option.ConfigureDbContext = builder => builder.UseNpgsql(connectionString, options =>
