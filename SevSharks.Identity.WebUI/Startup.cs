@@ -109,6 +109,20 @@ public class Startup
             ServerCertificateCustomValidationCallback = (_, _, _, _) => true
         });
 
+        // CORS для разрешения запросов от SPA
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpa", policy =>
+            {
+                var mainUrl = Configuration["MainUrl"] ?? "http://localhost:4200";
+                var uri = new Uri(mainUrl);
+                policy.WithOrigins($"{uri.Scheme}://{uri.Host}:{uri.Port}")
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .AllowCredentials();
+            });
+        });
+
         services.AddSingleton(Configuration);
         services.AddSingleton((IConfigurationRoot) Configuration);
     }
@@ -140,6 +154,7 @@ public class Startup
 
         app.UseStaticFiles()
             .UseRouting()
+            .UseCors("AllowSpa")
             .UseSession()
             .UseResponseCompression()
             .UseAuthentication()

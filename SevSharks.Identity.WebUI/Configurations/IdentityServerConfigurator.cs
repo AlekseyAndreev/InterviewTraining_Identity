@@ -22,8 +22,7 @@ public static class IdentityServerConfigurator
 
         string connectionString = ConfigurationHelper.GetConnectionStringFromConfig(configuration);
 
-        // Добавляем HttpClientFactory для webhook
-        services.AddHttpClient();
+        // IUserSyncWebhookService регистрируется в Startup.cs с именованным HttpClient
         services.AddScoped<IUserSyncWebhookService, UserSyncWebhookService>();
 
         var identityServerBuilder = services
