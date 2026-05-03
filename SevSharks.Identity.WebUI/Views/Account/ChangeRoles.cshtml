@@ -41,11 +41,13 @@
                 <input class="form-check-input" type="checkbox" name="Roles" value="@SevSharks.Identity.BusinessLogic.RolesConstants.Candidate" id="roleCandidate"
                 @(Model?.Roles?.Contains(SevSharks.Identity.BusinessLogic.RolesConstants.Candidate) == true ? "checked" : "") />
                 <label class="form-check-label" for="roleCandidate">Кандидат</label>
+                <small class="form-text text-muted" for="roleCandidate">(Tот, кто хочет пройти собеседование)</small>
             </div>
             <div class="form-check">
                 <input class="form-check-input" type="checkbox" name="Roles" value="@SevSharks.Identity.BusinessLogic.RolesConstants.Expert" id="roleExpert"
                 @(Model?.Roles?.Contains(SevSharks.Identity.BusinessLogic.RolesConstants.Expert) == true ? "checked" : "") />
                <label class="form-check-label" for="roleExpert">Эксперт</label>
+                <small class="form-text text-muted" for="roleExpert">(Tот, кто проводит собеседование)</small>
             </div>
             <small class="form-text text-muted">Выберите одну или несколько ролей (можно не выбирать)</small>
             @Html.ValidationMessageFor(m => m.Roles, string.Empty)
