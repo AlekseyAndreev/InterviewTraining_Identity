@@ -11,16 +11,16 @@ using System.Threading.Tasks;
 
 namespace SevSharks.Identity.BusinessLogic.Services;
 
-/// <summary>
+///<summary>
 /// Сервис синхронизации пользователей через webhook
-/// </summary>
+///</summary>
 public class UserSyncWebhookService : IUserSyncWebhookService
 {
     private const string ApiKeyHeaderName = "X-Api-Key";
+    public const string WebhookClientName = "WebhookClient";
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
     private readonly ILogger<UserSyncWebhookService> _logger;
-    
     public UserSyncWebhookService(
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
@@ -35,7 +35,6 @@ public class UserSyncWebhookService : IUserSyncWebhookService
     {
         var webhookUrl = _configuration["UserSync:WebhookUrl"];
         var apiKey = _configuration["UserSync:ApiKey"];
-        
         if (string.IsNullOrEmpty(webhookUrl))
         {
             _logger.LogWarning("UserSync:WebhookUrl не настроен. Синхронизация пропущена для пользователя {UserId}", userId);
@@ -43,7 +42,6 @@ public class UserSyncWebhookService : IUserSyncWebhookService
         }
 
         var rolesList = roles?.ToList() ?? new List<string>();
-        
         var payload = new UserSyncRequest
         {
             IdentityUserId = userId,
@@ -53,8 +51,7 @@ public class UserSyncWebhookService : IUserSyncWebhookService
 
         try
         {
-            using var httpClient = _httpClientFactory.CreateClient();
-            
+            using var httpClient = _httpClientFactory.CreateClient(WebhookClientName);
             if (!string.IsNullOrEmpty(apiKey))
             {
                 httpClient.DefaultRequestHeaders.Add(ApiKeyHeaderName, apiKey);
@@ -73,7 +70,7 @@ public class UserSyncWebhookService : IUserSyncWebhookService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Ошибка при отправке webhook для пользователя {UserId}", userId);
+            _logger.LogError(ex, "Ошибка при отправке webhook для пользователя {UserId}, {WebHookUrl}", userId, webhookUrl);
         }
     }
 }

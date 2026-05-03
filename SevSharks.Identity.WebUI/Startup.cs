@@ -5,10 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using SevSharks.Identity.BusinessLogic.Services;
 using SevSharks.Identity.WebUI.Configurations;
 using SevSharks.Identity.WebUI.Options;
 using SevSharks.Identity.WebUI.Services;
 using System;
+using System.Net.Http;
 using System.Text.Json.Serialization;
 
 namespace SevSharks.Identity.WebUI;
@@ -96,6 +98,16 @@ public class Startup
         services.AddSevSharksAuthentication();
 
         services.AddScoped<IEmailSender, SmtpEmailSender>();
+
+        // HttpClient для webhook с игнорированием HTTPS-сертификата
+        services.AddHttpClient(UserSyncWebhookService.WebhookClientName, client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(30);
+        })
+        .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true
+        });
 
         services.AddSingleton(Configuration);
         services.AddSingleton((IConfigurationRoot) Configuration);
