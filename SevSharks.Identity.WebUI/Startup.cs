@@ -114,9 +114,8 @@ public class Startup
         {
             options.AddPolicy("AllowSpa", policy =>
             {
-                var mainUrl = Configuration["MainUrl"] ?? "http://localhost:4200";
-                var uri = new Uri(mainUrl);
-                policy.WithOrigins($"{uri.Scheme}://{uri.Host}:{uri.Port}")
+                var corsUrls = Configuration.GetSection("CorsUrls").Get<string[]>() ?? Array.Empty<string>();
+                policy.WithOrigins(corsUrls)
                       .AllowAnyMethod()
                       .AllowAnyHeader()
                       .AllowCredentials()
