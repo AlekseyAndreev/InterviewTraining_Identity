@@ -24,4 +24,10 @@ public class UserSyncRequest
     /// </summary>
     [JsonPropertyName("isExpert")]
     public bool IsExpert { get; set; }
+
+    /// <summary>
+    /// Является ли экспертом
+    /// </summary>
+    [JsonPropertyName("isAdmin")]
+    public bool IsAdmin { get; set; }
 }

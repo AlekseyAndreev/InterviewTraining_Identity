@@ -47,6 +47,7 @@ public class UserSyncWebhookService : IUserSyncWebhookService
             IdentityUserId = userId,
             IsCandidate = rolesList.Contains(RolesConstants.Candidate),
             IsExpert = rolesList.Contains(RolesConstants.Expert),
+            IsAdmin = rolesList.Contains(RolesConstants.Admin),
         };
 
         try
